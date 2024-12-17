@@ -25,7 +25,8 @@ import ta
 from ta.trend import SMAIndicator
 
 
-
+#@st.cache
+@st.experimental_singleton
 # Load pre-existing data from folder
 def load_pre_existing_data_from_folder(folder_path):
     try:
@@ -400,7 +401,7 @@ def generate_predictions1(prices_df):
     return prediction_df, model_scores
 
 
-
+@st.cache
 def generate_predictions(prices_df):
     # Ensure required columns exist
     required_columns = ['Arrival_Date', 'Modal_Price']
@@ -539,7 +540,36 @@ def generate_predictions(prices_df):
 
     return prediction_df, model_scores
 
+@st.experimental_singleton
+def populate_dropdowns(pre_existing_data):
+  """
+  Populates Streamlit sidebar with dropdown menus for State, Market, and Commodity.
 
+  Args:
+    pre_existing_data: DataFrame containing the data for the dropdowns.
+
+  Returns:
+    A tuple containing the selected State, Market, and Commodity.
+  """
+
+  if not pre_existing_data.empty:
+    states = pre_existing_data['State'].dropna().unique().tolist()
+    state = st.sidebar.selectbox("Select State", states)
+
+    # Helper function to get markets for a given state
+    def get_markets_for_state(df, state):
+      return df[df['State'] == state]['Market'].dropna().unique().tolist()
+
+    markets = get_markets_for_state(pre_existing_data, state)
+    market = st.sidebar.selectbox("Select Market", markets)
+
+    commodities = pre_existing_data['Commodity'].dropna().unique().tolist()
+    commodity = st.sidebar.selectbox("Select Commodity", commodities)
+
+  else:
+    state, market, commodity = None, None, None
+
+  return state, market, commodity
 
 
 
@@ -574,19 +604,8 @@ st.title("Market Price Viewer and Predictor")
 # Sidebar Inputs
 st.sidebar.header("User Inputs")
 
-# Populate dropdowns from pre-existing data
-if not pre_existing_data.empty:
-    states = pre_existing_data['State'].dropna().unique().tolist()
-    state = st.sidebar.selectbox("Select State", states)
-    
-    # Dynamically filter markets based on the selected state
-    markets = get_markets_for_state(pre_existing_data, state)
-    market = st.sidebar.selectbox("Select Market", markets)
-    
-    commodities = pre_existing_data['Commodity'].dropna().unique().tolist()
-    commodity = st.sidebar.selectbox("Select Commodity", commodities)
-else:
-    states, markets, commodities = [], [], []
+state, market, commodity = populate_dropdowns(pre_existing_data) 
+
 
 # Date range input
 start_date = st.sidebar.date_input("Start Date", datetime.now() - timedelta(days=7))
@@ -640,6 +659,7 @@ if st.sidebar.button("Fetch Data"):
         api_key = "579b464db66ec23bdd000001d74c0d0c21a44b0572ae636312525017"
         if api_key:
             st.header(f"Market Prices (From API)")
+            st.write("Current limit on API is to pull 10 records only.");
             fetched_data = fetch_market_prices(api_key, state, market, commodity, start_date, end_date)
             if not fetched_data.empty:
                 filtered_data = get_pre_existing_data(fetched_data, state, market, commodity, start_date, end_date)
@@ -660,12 +680,12 @@ if st.sidebar.button("Fetch Data"):
                 fig = st.line(predictions, x='Arrival_Date', y=['Linear Regression', 'Random Forest', 'XGBoost', 'ARIMA'], title="Price Prediction Chart")
                 st.plotly_chart(fig)
                 
-                st.download_button(
-                    label="Download API Data as CSV",
-                    data=fetched_data.to_csv(index=False),
-                    file_name=f"{commodity}_market_prices_api.csv",
-                    mime="text/csv"
-                )
+                # st.download_button(
+                #     label="Download API Data as CSV",
+                #     data=fetched_data.to_csv(index=False),
+                #     file_name=f"{commodity}_market_prices_api.csv",
+                #     mime="text/csv"
+                # )
             else:
                 st.warning("No data available for the selected criteria from API.")
         else:
