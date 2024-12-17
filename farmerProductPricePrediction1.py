@@ -9,7 +9,7 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import requests
-import plotly.express as px
+#import plotly.express as px
 import matplotlib.pyplot as plt
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
@@ -614,12 +614,12 @@ if st.sidebar.button("Fetch Data"):
             
             st.subheader("Predicted Prices")
             st.write("Prediction (Tabular Format)")
-            #st.dataframe(predictions)
+            st.dataframe(predictions)
             
 
             # Display the model scores
-            st.subheader("Model Performance")
-            st.write(model_scores)
+            # st.subheader("Model Performance")
+            # st.write(model_scores)
 
             st.write("Prediction (Chart Format)")
             #fig = px.line(predictions, x='date', y='predicted_price', title="Price Prediction Chart")
@@ -627,12 +627,12 @@ if st.sidebar.button("Fetch Data"):
             chart_data = predictions.set_index('Date')
             st.line_chart(chart_data)
             
-            st.download_button(
-                label="Download Filtered Data as CSV",
-                data=filtered_data.to_csv(index=False),
-                file_name=f"{commodity}_market_prices_filtered.csv",
-                mime="text/csv"
-            )
+            # st.download_button(
+            #     label="Download Filtered Data as CSV",
+            #     data=filtered_data.to_csv(index=False),
+            #     file_name=f"{commodity}_market_prices_filtered.csv",
+            #     mime="text/csv"
+            # )
         else:
             st.warning("No data available for the selected criteria in pre-existing data.")
     
@@ -657,7 +657,7 @@ if st.sidebar.button("Fetch Data"):
                 
                 st.write("Prediction (Chart Format)")
                 #fig = px.line(predictions, x='Date', y='predicted_price', title="Price Prediction Chart")
-                fig = px.line(predictions, x='Arrival_Date', y=['Linear Regression', 'Random Forest', 'XGBoost', 'ARIMA'], title="Price Prediction Chart")
+                fig = st.line(predictions, x='Arrival_Date', y=['Linear Regression', 'Random Forest', 'XGBoost', 'ARIMA'], title="Price Prediction Chart")
                 st.plotly_chart(fig)
                 
                 st.download_button(
