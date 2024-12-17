@@ -1,0 +1,16 @@
+ipykernel
+numpy
+pandas
+matplotlib
+seaborn
+flask
+memory_profiler
+streamlit
+scikit-learn
+xgboost
+statsmodels
+tensorflow
+prophet
+keras
+cython
+ta
