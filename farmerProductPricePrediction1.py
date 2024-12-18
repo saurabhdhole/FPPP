@@ -561,7 +561,7 @@ def populate_dropdowns(pre_existing_data):
     def get_markets_for_state(df, state):
       return df[df['State'] == state]['Market'].dropna().unique().tolist()
 
-    markets = get_markets_for_state(pre_existing_data, state)
+    markets = get_markets_for_state(pre_existing_data, states)
     
 
     commodities = pre_existing_data['Commodity'].dropna().unique().tolist()
