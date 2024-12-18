@@ -73,10 +73,6 @@ def load_pre_existing_data(file_path):
         return pd.DataFrame()
 
 
-# Filter markets based on selected state
-def get_markets_for_state(df, state):
-    return df[df['State'] == state]['Market'].unique()
-
 def generate_future_dates(start_date, days=365):
     """
     Generate a list of future dates starting from `start_date` for the next `days` days.
@@ -539,39 +535,11 @@ def generate_predictions(prices_df):
     })
 
     return prediction_df, model_scores
-   # Helper function to get markets for a given state
-    def get_markets_for_state(df, state):
-        return df[df['State'] == state]['Market'].dropna().unique().tolist()
+
+# Helper function to get markets for a given state
+def get_markets_for_state(df, state):
+    return df[df['State'] == state]['Market'].dropna().unique().tolist()
     
-#@st.experimental_singleton
-@st.cache_data
-def populate_dropdowns(pre_existing_data):
-  """
-  Populates Streamlit sidebar with dropdown menus for State, Market, and Commodity.
-
-  Args:
-    pre_existing_data: DataFrame containing the data for the dropdowns.
-
-  Returns:
-    A tuple containing the selected State, Market, and Commodity.
-  """
-
-  if not pre_existing_data.empty:
-    states = pre_existing_data['State'].dropna().unique().tolist()
-    
-
- 
-
-    markets = get_markets_for_state(pre_existing_data, states)
-    
-
-    commodities = pre_existing_data['Commodity'].dropna().unique().tolist()
-    
-
-  else:
-    states, markets, commodities = None, None, None
-
-  return states, markets, commodities
 
 
 
@@ -606,10 +574,21 @@ st.title("Market Price Viewer and Predictor")
 # Sidebar Inputs
 st.sidebar.header("User Inputs")
 
-states, markets, commodities = populate_dropdowns(pre_existing_data) 
-state = st.sidebar.selectbox("Select State", states)
-market = st.sidebar.selectbox("Select Market", markets)
-commodity = st.sidebar.selectbox("Select Commodity", commodities)
+# Populate dropdowns from pre-existing data
+
+# Populate dropdowns from pre-existing data
+if not pre_existing_data.empty:
+    states = pre_existing_data['State'].dropna().unique().tolist()
+    state = st.sidebar.selectbox("Select State", states)
+    
+    # Dynamically filter markets based on the selected state
+    markets = get_markets_for_state(pre_existing_data, state)
+    market = st.sidebar.selectbox("Select Market", markets)
+    
+    commodities = pre_existing_data['Commodity'].dropna().unique().tolist()
+    commodity = st.sidebar.selectbox("Select Commodity", commodities)
+else:
+    states, markets, commodities = [], [], []
 
 # Date range input
 start_date = st.sidebar.date_input("Start Date", datetime.now() - timedelta(days=7))
