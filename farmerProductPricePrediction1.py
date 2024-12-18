@@ -539,7 +539,10 @@ def generate_predictions(prices_df):
     })
 
     return prediction_df, model_scores
-
+   # Helper function to get markets for a given state
+    def get_markets_for_state(df, state):
+        return df[df['State'] == state]['Market'].dropna().unique().tolist()
+    
 #@st.experimental_singleton
 @st.cache_data
 def populate_dropdowns(pre_existing_data):
@@ -557,9 +560,7 @@ def populate_dropdowns(pre_existing_data):
     states = pre_existing_data['State'].dropna().unique().tolist()
     
 
-    # Helper function to get markets for a given state
-    def get_markets_for_state(df, state):
-      return df[df['State'] == state]['Market'].dropna().unique().tolist()
+ 
 
     markets = get_markets_for_state(pre_existing_data, states)
     
