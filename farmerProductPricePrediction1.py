@@ -140,10 +140,10 @@ def convert_date_format(date_input):
 
 # Function to fetch daily market prices from API
 def fetch_market_prices(api_key, state, district, commodity, start_date, end_date, limit=999999999999):
-    st.write("Start Date:", convert_date_format(start_date))
-    st.write("End Date:",convert_date_format( end_date))
-    st.write("State:", state)
-    st.write("District:", district)
+    # st.write("Start Date:", convert_date_format(start_date))
+    # st.write("End Date:",convert_date_format( end_date))
+    # st.write("State:", state)
+    # st.write("District:", district)
     resource_id = "35985678-0d79-46b4-9ed6-6f13308a1d24"  # Replace with actual resource ID
     url = f"https://api.data.gov.in/resource/{resource_id}?api-key={api_key}&format=json"
     url += f"&filters[State.keyword]={state}&filters[Market.keyword]={district}&filters[Commodity.keyword]={commodity}"
