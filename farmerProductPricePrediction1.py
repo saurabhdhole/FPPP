@@ -25,8 +25,8 @@ import ta
 from ta.trend import SMAIndicator
 
 
-#@st.cache
-@st.experimental_singleton
+@st.cache
+#@st.experimental_singleton
 # Load pre-existing data from folder
 def load_pre_existing_data_from_folder(folder_path):
     try:
@@ -540,7 +540,8 @@ def generate_predictions(prices_df):
 
     return prediction_df, model_scores
 
-@st.experimental_singleton
+#@st.experimental_singleton
+@st.cache
 def populate_dropdowns(pre_existing_data):
   """
   Populates Streamlit sidebar with dropdown menus for State, Market, and Commodity.
