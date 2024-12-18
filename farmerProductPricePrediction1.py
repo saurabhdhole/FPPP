@@ -555,17 +555,17 @@ def populate_dropdowns(pre_existing_data):
 
   if not pre_existing_data.empty:
     states = pre_existing_data['State'].dropna().unique().tolist()
-    state = st.sidebar.selectbox("Select State", states)
+    
 
     # Helper function to get markets for a given state
     def get_markets_for_state(df, state):
       return df[df['State'] == state]['Market'].dropna().unique().tolist()
 
     markets = get_markets_for_state(pre_existing_data, state)
-    market = st.sidebar.selectbox("Select Market", markets)
+    
 
     commodities = pre_existing_data['Commodity'].dropna().unique().tolist()
-    commodity = st.sidebar.selectbox("Select Commodity", commodities)
+    
 
   else:
     state, market, commodity = None, None, None
@@ -605,8 +605,10 @@ st.title("Market Price Viewer and Predictor")
 # Sidebar Inputs
 st.sidebar.header("User Inputs")
 
-state, market, commodity = populate_dropdowns(pre_existing_data) 
-
+states, markets, commodities = populate_dropdowns(pre_existing_data) 
+state = st.sidebar.selectbox("Select State", states)
+market = st.sidebar.selectbox("Select Market", markets)
+commodity = st.sidebar.selectbox("Select Commodity", commodities)
 
 # Date range input
 start_date = st.sidebar.date_input("Start Date", datetime.now() - timedelta(days=7))
