@@ -568,9 +568,9 @@ def populate_dropdowns(pre_existing_data):
     
 
   else:
-    state, market, commodity = None, None, None
+    states, markets, commodities = None, None, None
 
-  return state, market, commodity
+  return states, markets, commodities
 
 
 
